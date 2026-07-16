@@ -27,6 +27,8 @@ public class Dependencia {
 
     private String direccion;
     private String telefono;
+    private String responsable;
+    private String municipio;
 
     @Email(message = "el correo no es valido")
     @NotBlank(message = "el correo es obligatorio")

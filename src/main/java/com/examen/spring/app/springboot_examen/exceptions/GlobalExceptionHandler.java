@@ -26,7 +26,8 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", "Recurso no encontrado"));
     }
 
-    // Captura cualquier otro error no controlado para evitar stacktraces técnicos en el cliente
+    // Captura cualquier otro error no controlado para evitar stacktraces técnicos
+    // en el cliente
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGeneric(Exception ex) {
         return ResponseEntity.internalServerError()

@@ -4,13 +4,15 @@ import com.examen.spring.app.springboot_examen.models.Dependencia;
 import com.examen.spring.app.springboot_examen.services.DependenciaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.time.LocalDate;
+import java.util.Map;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,9 +36,30 @@ public class DependenciasController {
             @Parameter(description = "Filtro de búsqueda por correo") @RequestParam(required = false) String correo,
             @Parameter(description = "Filtro de búsqueda por estado (activo/inactivo)") @RequestParam(required = false) Boolean activo,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return service.listar(nombre, correo, activo, page, size);
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "") @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+            @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
+        return service.listar(nombre, correo, activo, page, size, fechaInicio, fechaFin);
     }
+
+    @ApiResponse(responseCode = "200", description = "OK")
+    @GetMapping("/total")
+    public Map<String, Long> obtenerTotales() {
+        return Map.of(
+                "activas", service.totalDependenciasActivas(),
+                "inactivas", service.totalDependenciasInactivas());
+    }
+    // public long totalActivas() {
+    // return service.totalDependenciasActivas();
+    // }
+
+    // @Operation(summary = "Total de dependencias inactivas", description =
+    // "Retorna el total de dependencias inactivas.")
+    // @ApiResponse(responseCode = "200", description = "OK")
+    // @GetMapping("/total/inactivas")
+    // public long totalInactivas() {
+    // return service.totalDependenciasInactivas();
+    // }
 
     // Crear una nueva dependencia con validaciones automáticas
     @Operation(summary = "Crear dependencia")

@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 // Repositorio JPA para Dependencia. JpaSpecificationExecutor nos permite usar filtros dinámicos (Spec)
 public interface DependenciaRepository
-        extends JpaRepository<Dependencia, Long>,
-        JpaSpecificationExecutor<Dependencia> {
+                extends JpaRepository<Dependencia, Long>,
+                JpaSpecificationExecutor<Dependencia> {
+        long countByActivo(Boolean activo);
+
 }

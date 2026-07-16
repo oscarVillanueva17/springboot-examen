@@ -1,18 +1,25 @@
 package com.examen.spring.app.springboot_examen.repositories;
 
 import com.examen.spring.app.springboot_examen.models.Dependencia;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import org.springframework.data.jpa.domain.Specification;
 
 /**
  * Clase para definir los filtros dinámicos (Specifications) de Dependencias.
  * 
- * Se usa JPA Criteria para construir las consultas de búsqueda de forma dinámica.
- * Si algún filtro llega nulo o vacío, se ignora y no se incluye en la consulta final.
+ * Se usa JPA Criteria para construir las consultas de búsqueda de forma
+ * dinámica.
+ * Si algún filtro llega nulo o vacío, se ignora y no se incluye en la consulta
+ * final.
  */
 public class DependenciaSpec {
 
     /**
-     * Filtra dependencias cuyo nombre contenga el texto indicado (búsqueda parcial).
+     * Filtra dependencias cuyo nombre contenga el texto indicado (búsqueda
+     * parcial).
      * La comparación es insensible a mayúsculas/minúsculas (LOWER + LIKE).
      *
      * @param nombre texto a buscar dentro del nombre
@@ -25,7 +32,8 @@ public class DependenciaSpec {
     }
 
     /**
-     * Filtra dependencias cuyo correo contenga el texto indicado (búsqueda parcial).
+     * Filtra dependencias cuyo correo contenga el texto indicado (búsqueda
+     * parcial).
      *
      * @param correo texto a buscar dentro del correo
      * @return Specification con la condición LIKE, o null si el valor está vacío
@@ -39,9 +47,21 @@ public class DependenciaSpec {
      * Filtra dependencias por su estado activo/inactivo (coincidencia exacta).
      *
      * @param activo true para activas, false para inactivas, null para no filtrar
-     * @return Specification con la condición de igualdad, o null si no se indicó valor
+     * @return Specification con la condición de igualdad, o null si no se indicó
+     *         valor
      */
     public static Specification<Dependencia> byActivo(Boolean activo) {
         return (root, q, cb) -> activo == null ? null : cb.equal(root.get("activo"), activo);
+    }
+
+    public static Specification<Dependencia> byFechaRegistro(LocalDate start, LocalDate end) {
+        return (root, q, cb) -> {
+            if (start == null || end == null) {
+                return null;
+            }
+            LocalDateTime inicioDia = start.atStartOfDay();
+            LocalDateTime finDia = end.atTime(23, 59, 59, 999999999);
+            return cb.between(root.get("fechaRegistro"), inicioDia, finDia);
+        };
     }
 }
